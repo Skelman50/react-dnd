@@ -28,7 +28,7 @@ const Column = ({ column, tasks, isOrange }) => {
   return (
     <Container>
       <Title isOrange={isOrange}>{column.title}</Title>
-      <Droppable droppableId={column.id}>
+      <Droppable droppableId={column.id} type="task">
         {(provided, snapshot) => (
           <TaskList
             {...provided.droppableProps}
