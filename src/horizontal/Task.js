@@ -5,14 +5,14 @@ import { Draggable } from "react-beautiful-dnd";
 const Container = styled.div`
   border: 1px solid lightgray;
   padding: 8px;
-  margin-bottom: 8px;
+  margin: 0 8px;
   border-radius: 2px;
   background-color: ${props => (props.isDragging ? "lightgreen" : "white")};
   color: ${props => (props.isOrange ? "orange" : "inherit")};
   display: flex;
 `;
 
-const Task = ({ task, index, isOrange }) => {
+const TaskHorizontal = ({ task, index, isOrange }) => {
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided, snaphot) => (
@@ -30,4 +30,4 @@ const Task = ({ task, index, isOrange }) => {
   );
 };
 
-export default Task;
+export default TaskHorizontal;

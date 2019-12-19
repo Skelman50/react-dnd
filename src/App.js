@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import styled from "styled-components";
-import { DragDropContext } from "react-beautiful-dnd";
-import { initialData } from "./initial-data";
-import Column from "./Column";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { initialData, initialDataHorizontal } from "./store/initial-data";
+import ColumnHorizontal from "./horizontal/Column";
+import { reorderColumn } from "./utils/reorderColumn";
+import InheritListColumn from "./main/InheritListColumn";
 
 const Container = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: ${({ horizontal }) =>
+    horizontal ? "center" : "space-around"};
 `;
 
 const App = () => {
   const [data, setData] = useState(initialData);
+  const [dataHorizontal, setDataHorizontal] = useState(initialDataHorizontal);
 
   // const onDragStart = () => {
   //   setIsOrange(true);
@@ -27,68 +31,59 @@ const App = () => {
 
   const onDragEnd = result => {
     document.body.style.backgroundColor = `inherit`;
-    const { source, destination, draggableId } = result;
-    if (!destination) return;
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
+    const reorder = reorderColumn(result, data);
+    if (reorder) {
+      return setData(reorder);
     }
-    const start = data.columns[source.droppableId];
-    const end = data.columns[destination.droppableId];
-    if (start === end) {
-      const newTaskIds = Array.from(start.taskIds);
-      newTaskIds.splice(source.index, 1);
-      newTaskIds.splice(destination.index, 0, draggableId);
-      const newColumn = {
-        ...start,
-        taskIds: newTaskIds
-      };
-      setData({
-        ...data,
-        columns: {
-          ...data.columns,
-          [newColumn.id]: newColumn
-        }
-      });
-      return;
+  };
+
+  const onDragEndHorizontal = result => {
+    const reorder = reorderColumn(result, dataHorizontal);
+    if (reorder) {
+      return setDataHorizontal(reorder);
     }
-
-    const startTaskIds = Array.from(start.taskIds);
-    startTaskIds.splice(source.index, 1);
-    const newStart = {
-      ...start,
-      taskIds: startTaskIds
-    };
-
-    const endTaskIds = Array.from(end.taskIds);
-    endTaskIds.splice(destination.index, 0, draggableId);
-    const newEnd = {
-      ...end,
-      taskIds: endTaskIds
-    };
-
-    setData({
-      ...data,
-      columns: {
-        ...data.columns,
-        [newStart.id]: newStart,
-        [newEnd.id]: newEnd
-      }
-    });
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Container>
-        {data.columnOrder.map(columnId => {
-          const column = data.columns[columnId];
-          const tasks = column.taskIds.map(taskId => data.tasks[taskId]);
-          return <Column key={column.id} column={column} tasks={tasks} />;
-        })}
-      </Container>
-    </DragDropContext>
+    <Fragment>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable
+          droppableId="all-colunns"
+          direction="horizontal"
+          type="column"
+        >
+          {provided => (
+            <Container {...provided.droppableProps} ref={provided.innerRef}>
+              {data.columnOrder.map((columnId, index) => {
+                const column = data.columns[columnId];
+                return (
+                  <InheritListColumn
+                    key={column.id}
+                    column={column}
+                    taskMap={data.tasks}
+                    index={index}
+                  />
+                );
+              })}
+              {provided.placeholder}
+            </Container>
+          )}
+        </Droppable>
+      </DragDropContext>
+      <DragDropContext onDragEnd={onDragEndHorizontal}>
+        <Container horizontal={true}>
+          {dataHorizontal.columnOrder.map(columnId => {
+            const column = dataHorizontal.columns[columnId];
+            const tasks = column.taskIds.map(
+              taskId => dataHorizontal.tasks[taskId]
+            );
+            return (
+              <ColumnHorizontal key={column.id} column={column} tasks={tasks} />
+            );
+          })}
+        </Container>
+      </DragDropContext>
+    </Fragment>
   );
 };
 

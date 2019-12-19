@@ -6,12 +6,14 @@ import Task from "./Task";
 const TaskList = styled.div`
   padding: 8px;
   background-color: ${props => (props.isDraggingOver ? "skyblue" : "white")};
-  flex-grow: 1;
-  min-height: 100px;
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Title = styled.h3`
   padding: 8px;
+  text-align: center;
   color: ${props => (props.isOrange ? "orange" : "inherit")};
 `;
 
@@ -19,16 +21,20 @@ const Container = styled.div`
   margin: 8px;
   border: 1px solid lightgray;
   border-radius: 2px;
-  width: 30%;
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
-const Column = ({ column, tasks, isOrange }) => {
+const ColumnHorizontal = ({ column, tasks, isOrange, isDropDisabled }) => {
   return (
     <Container>
       <Title isOrange={isOrange}>{column.title}</Title>
-      <Droppable droppableId={column.id} type="task">
+      <Droppable
+        droppableId={column.id}
+        isDropDisabled={isDropDisabled}
+        direction="horizontal"
+      >
         {(provided, snapshot) => (
           <TaskList
             {...provided.droppableProps}
@@ -51,4 +57,4 @@ const Column = ({ column, tasks, isOrange }) => {
   );
 };
 
-export default Column;
+export default ColumnHorizontal;
