@@ -16,21 +16,28 @@ const App = () => {
   const [data, setData] = useState(initialData);
   const [dataHorizontal, setDataHorizontal] = useState(initialDataHorizontal);
 
-  // const onDragStart = () => {
-  //   setIsOrange(true);
-  //   document.body.style.transition = `background-color 0.5s ease`;
-  // };
+  const onDragStart = (start, provided) => {
+    provided.announce(
+      `Press space bar to lift the task in position ${start.source.index + 1}`
+    );
+  };
 
-  // const onDragUpdate = update => {
-  //   const { destination } = update;
-  //   const opacity = destination
-  //     ? destination.index / Object.keys(data.tasks).length
-  //     : 0;
-  //   document.body.style.backgroundColor = `rgba(152, 141, 217, ${opacity})`;
-  // };
+  const onDragUpdate = (update, provided) => {
+    const message = update.destination
+      ? `Press space bar to lift the task in position ${update.source.index +
+          1}`
+      : "You are currently not over a droppable area";
+    provided.announce(message);
+  };
 
-  const onDragEnd = result => {
+  const onDragEnd = (result, provided) => {
     document.body.style.backgroundColor = `inherit`;
+    const message = result.destination
+      ? `You have moved the task from position ${result.source.index +
+          1} to ${result.destination.index + 1}`
+      : `The task has been returned to its starting position of ${result.source
+          .index + 1}`;
+    provided.announce(message);
     const reorder = reorderColumn(result, data);
     if (reorder) {
       return setData(reorder);
@@ -46,7 +53,11 @@ const App = () => {
 
   return (
     <Fragment>
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext
+        onDragEnd={onDragEnd}
+        onDragStart={onDragStart}
+        onDragUpdate={onDragUpdate}
+      >
         <Droppable
           droppableId="all-colunns"
           direction="horizontal"
@@ -70,7 +81,7 @@ const App = () => {
           )}
         </Droppable>
       </DragDropContext>
-      <DragDropContext onDragEnd={onDragEndHorizontal}>
+      {/* <DragDropContext onDragEnd={onDragEndHorizontal}>
         <Container horizontal={true}>
           {dataHorizontal.columnOrder.map(columnId => {
             const column = dataHorizontal.columns[columnId];
@@ -82,7 +93,7 @@ const App = () => {
             );
           })}
         </Container>
-      </DragDropContext>
+      </DragDropContext> */}
     </Fragment>
   );
 };
