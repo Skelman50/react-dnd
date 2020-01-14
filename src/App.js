@@ -1,7 +1,7 @@
 import React, { useState, Fragment } from "react";
 import styled from "styled-components";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import { initialData, initialDataHorizontal } from "./store/initial-data";
+import { initialData } from "./store/initial-data";
 import { reorderColumn } from "./utils/reorderColumn";
 import InheritListColumn from "./main/InheritListColumn";
 
