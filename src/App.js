@@ -2,7 +2,6 @@ import React, { useState, Fragment } from "react";
 import styled from "styled-components";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { initialData, initialDataHorizontal } from "./store/initial-data";
-import ColumnHorizontal from "./horizontal/Column";
 import { reorderColumn } from "./utils/reorderColumn";
 import InheritListColumn from "./main/InheritListColumn";
 
@@ -14,7 +13,7 @@ const Container = styled.div`
 
 const App = () => {
   const [data, setData] = useState(initialData);
-  const [dataHorizontal, setDataHorizontal] = useState(initialDataHorizontal);
+  // const [dataHorizontal, setDataHorizontal] = useState(initialDataHorizontal);
 
   const onDragStart = (start, provided) => {
     provided.announce(
@@ -44,12 +43,12 @@ const App = () => {
     }
   };
 
-  const onDragEndHorizontal = result => {
-    const reorder = reorderColumn(result, dataHorizontal);
-    if (reorder) {
-      return setDataHorizontal(reorder);
-    }
-  };
+  // const onDragEndHorizontal = result => {
+  //   const reorder = reorderColumn(result, dataHorizontal);
+  //   if (reorder) {
+  //     return setDataHorizontal(reorder);
+  //   }
+  // };
 
   return (
     <Fragment>
